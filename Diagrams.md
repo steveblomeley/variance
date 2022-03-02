@@ -9,9 +9,9 @@ classDiagram
     Stream <|-- FileStream
 ```
 
-## Examples
+## Variance Examples
 ### Key to Subsequent Diagrams
-Firstly, these are not class diagrams, or any other kind of UML diagram or formal diagram. They are informal diagrams, to help answer the following question :  
+The subsequent diagrams are **not** class diagrams, or any other kind of UML diagram. They are informal diagrams, to help answer the following question :  
 - "If a method asks for a parameter of type T1, which of these other types (T2, T3, etc...) will it accept, and which will it not accept?"
 
 ### 1. Simple Types
@@ -29,7 +29,7 @@ object o = new object();
 SomeMethod(o);            //error on this line
 ```
 
-We can create a diagram to represent the rules around what the compiler will and will not accept as parameter types. This is similar to the class diagram above, but has some key differences.
+We can create a diagram to represent these rules around what the compiler will and will not accept as parameter types. This is similar to the class diagram above, but has some key differences.
 Let's look at the diagram, then explain how to read it:
 
 ```mermaid
@@ -42,7 +42,7 @@ graph LR
     
     %% define "normal" (covariant) relationships between classes
     O -- If I ask for 'object', I will also accept --> S
-    S --> FS
+    S -- If I ask for 'Stream', I will also accept --> FS
     S --> NS
 ```
 
@@ -57,6 +57,23 @@ So we can read this diagram as stating the following rules for a method that tak
 - It will accept an object of type NetworkStream
 - It will accept an object of type FileStream
 - It will NOT accept an object of type object (as this goes **against** the direction of the arrow from object to Stream.
+
+Note as well that these arrows are "associative" - 
+
+```mermaid
+graph LR
+    %% define relationship with self for each class
+    O[object] --> O[object]
+    S[Stream] --> S[Stream]
+    FS[FileStream] --> FS[FileStream]
+    
+    %% define "normal" (covariant) relationships between classes
+    O -- #1 --> S
+    S -- #2 --> FS
+    O -- #3 - We can add this, because #1 and #2 are associative --> FS
+```
+
+So we can use a Stream - *or* a FileStream - where an object is expected.
 
 ### IEnumerable of a Simple Type
 
